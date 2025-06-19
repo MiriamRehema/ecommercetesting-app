@@ -14,7 +14,13 @@ class Category extends Model
         'name',
         'slug',
         'image',
-        'is_active'
+        'is_active',
+        'description',
+
+    ];
+
+     protected $casts=[
+        'image'=> 'array'
 
     ];
     public function products(){

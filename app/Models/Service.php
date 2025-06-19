@@ -13,13 +13,10 @@ class Service extends Model
         'name',
         'slug',
         'description',
-        'image',
+        'icon',
         'is_active',
         
 
     ];
-    protected $casts=[
-        'images'=> 'array'
-
-    ];
+   
 }

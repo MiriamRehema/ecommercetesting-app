@@ -12,18 +12,26 @@ use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Textarea;
+use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Str;
 
 class CategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-tag';
 
     public static function form(Form $form): Form
     {
@@ -34,20 +42,40 @@ class CategoryResource extends Resource
                     ->schema([
                         TextInput::make('name')
                         ->required()
-                        ->maxLength(255),
+                        ->maxLength(255)
+                        ->live(onBlur: true)
+                        ->afterStateUpdated(function (string $operation, $state, Set $set) {
+                            if ($operation === 'create') {
+                                $set('slug', \Str::slug($state));
+                            }
+                        }),
+
 
                        TextInput::make('slug')
                         ->required()
                         ->maxLength(255)
-                        ->disabled(),
+                        ->disabled()
+                        ->dehydrated()
+                        ->unique(Category::class, 'slug', ignoreRecord: true)
+                       
 
                     ]),
                       
                 FileUpload::make('image')
-                    ->image(),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
-                Forms\Components\Toggle::make('is_active')
+                    ->label('Category Image')
+                    ->image()
+                    ->maxSize(1024)
+                    ->directory('categories')
+                    ->required(),
+
+                Textarea::make('description')
+                    
+                    ->maxLength(65535)
+                    ->rows(3)
+                    ->cols(3)
+                    ->required(),
+
+                Toggle::make('is_active')
                     ->required()
                     ->default(true),
                 ]),
@@ -62,10 +90,25 @@ class CategoryResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
+
+                 Tables\Columns\ImageColumn::make('image')
+                    ->label('Image')
+                    ->circular()
+                    ->rounded(),
+
+
                 Tables\Columns\TextColumn::make('slug')
                     ->searchable(),
+                   
+                Tables\Columns\TextColumn::make('description')
+                    ->limit(50)
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+               
+
                 Tables\Columns\IconColumn::make('is_active')
                     ->boolean(),
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -79,7 +122,11 @@ class CategoryResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make(),
+                    DeleteAction::make(),
+                ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

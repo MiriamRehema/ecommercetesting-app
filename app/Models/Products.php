@@ -21,14 +21,14 @@ class Products extends Model
         'is_featured',
         'is_new',
         'is_on_sale',
-        'sale_price',
+        
         
 
 
     ];
 
     protected $casts=[
-        'images'=> 'array'
+        'image'=> 'array'
 
     ];
 

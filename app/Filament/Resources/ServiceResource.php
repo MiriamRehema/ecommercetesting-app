@@ -63,7 +63,7 @@ class ServiceResource extends Resource
                       TextInput::make('icon')
                         ->label('Icon')
                         ->maxLength(255)
-                        ->required()
+                        
                         ->helperText('Use heroicons or any other icon library.'),
                        
 

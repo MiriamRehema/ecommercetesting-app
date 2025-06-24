@@ -35,6 +35,8 @@ class ServiceResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
+    protected static ?int $navigationSort = 2;
+
     public static function form(Form $form): Form
     {
         return $form
@@ -64,7 +66,8 @@ class ServiceResource extends Resource
                         ->label('Icon')
                         ->maxLength(255)
                         
-                        ->helperText('Use heroicons or any other icon library.'),
+                        ->helperText('Use heroicons or any other icon library.')
+                        
                        
 
                     ]),

@@ -13,10 +13,19 @@ class Service extends Model
         'name',
         'slug',
         'description',
-        'icon',
+        'price',
+        'image',
         'is_active',
         
 
     ];
+    protected $casts=[
+        'image'=> 'array'
+
+    ];
+    
+    public function reviews(){
+        return $this->belongsToMany(Review::class);
+    }
    
 }

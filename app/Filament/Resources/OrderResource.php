@@ -146,10 +146,10 @@ class OrderResource extends Resource
                             ->columnSpan(4)
                             ->reactive()
                             ->afterStateUpdated(
-                                fn ($state,Set $set)=>$set('unit_amount',Products::find($state)->price ?? 0)
+                                fn ($state,Set $set)=>$set('unit_amount',Products::find($state)?->price ?? 0)
                             )
                             ->afterStateUpdated(
-                                fn ($state,Set $set)=>$set('total_amount',Products::find($state)->price ?? 0)
+                                fn ($state,Set $set)=>$set('total_amount',Products::find($state)?->price ?? 0)
                             ),
                             
 
@@ -165,13 +165,14 @@ class OrderResource extends Resource
                             TextInput::make('unit_amount')
                             ->numeric()
                             ->required()
-                            ->disabled()
-                            
+                           ->disabled()
+                            ->dehydrated()
                             ->columnSpan(3),
 
                             TextInput::make('total_amount')
                             ->numeric()
                             ->required()
+                            ->dehydrated()
                             ->columnSpan(3)
                             
 

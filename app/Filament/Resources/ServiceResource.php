@@ -21,8 +21,9 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Forms\Set;
+use Filament\Forms\Components\Group;
 
-
+use Filament\Forms\Components\MarkdownEditor;
 
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -41,53 +42,62 @@ class ServiceResource extends Resource
     {
         return $form
             ->schema([
-                Section::make([
-                    Grid::make()
-                    ->schema([
-                        TextInput::make('name')
-                        ->required()
-                        ->maxLength(255)
-                        ->live(onBlur: true)
-                        ->afterStateUpdated(function (string $operation, $state, Set $set) {
+                Group::make()->schema([
+                        Section::make('Service Information')->schema([
+                            TextInput::make('name')
+                            ->required()
+                            ->maxLength(255)
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(function (string $operation, $state, Set $set) {
                             if ($operation === 'create') {
                                 $set('slug', \Str::slug($state));
                             }
                         }),
 
 
-                       TextInput::make('slug')
-                        ->required()
-                        ->maxLength(255)
-                        ->disabled()
-                        ->dehydrated()
-                        ->unique(Service::class, 'slug', ignoreRecord: true),
+                            TextInput::make('slug')
+                            ->required()    
+                            ->maxLength(255)
+                            ->disabled()
+                            ->dehydrated()
+                            ->unique(Service::class, 'slug', ignoreRecord: true),
 
-                      TextInput::make('icon')
-                        ->label('Icon')
-                        ->maxLength(255)
+                            MarkdownEditor::make('description')
+                            ->required()
+                            ->columnSpanFull()
+                            ->fileAttachmentsDirectory('services'),
+                        ])->columns(2),
+
+                        section::make('image')->schema([
+                            FileUpload::make('image')
+                            
+                            ->multiple()
+                            ->directory('services')
+                            ->maxFiles(5)
+                            ->reorderable(),
+                        ])
+                ])->columnSpan(2),
+
+                Group::make()->schema([
+                    section::make('Price')->schema([
+                        TextInput::make('price')
+                        ->numeric()
+                        ->required()
                         
-                        ->helperText('Use heroicons or any other icon library.')
-                        
-                       
 
                     ]),
-                      
-          
+                    Toggle::make('is_active')
+                     ->required()
+                     ->default(true),
+                 
 
-                Textarea::make('description')
                     
-                    ->maxLength(65535)
-                    ->rows(3)
-                    ->cols(3)
-                    ->required(),
 
-                Toggle::make('is_active')
-                    ->required()
-                    ->default(true),
-                ]),
+                ])->columnSpan(1)
+
                
               
-            ]);
+            ])->columns(3);
     }
 
     public static function table(Table $table): Table
@@ -96,6 +106,9 @@ class ServiceResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
+
+
+                
                 
                 Tables\Columns\IconColumn::make('is_active')
                     ->boolean(),
@@ -107,11 +120,13 @@ class ServiceResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('icon')
-                    ->label('Icon')
-                    ->html()
-                    ->formatStateUsing(fn ($state) => '<i class="' . $state . '"></i>')
-                    ->html(),
+                Tables\Columns\ImageColumn::make('image')
+                    
+                    ->circular()
+                    ->rounded(),
+                Tables\Columns\TextColumn::make('price')
+                ->money()
+                ->formatStateUsing(fn ($state) => '$' . number_format($state, 2) . ' per service') // Append "per SMS"
                     
             ])
             ->filters([

@@ -40,7 +40,7 @@ class Products extends Model
     }
    
      public function reviews(){
-        return $this->HasMany(Review::class);
+        return $this->belongsToMany(Review::class);
     }
    
     

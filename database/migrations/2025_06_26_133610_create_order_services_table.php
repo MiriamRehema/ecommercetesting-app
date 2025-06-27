@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('order_services', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('service_requests_id')->constrained('service_requests')->cascadeOnDelete();
-            $table->foreignId('services_id')->constrained('services')->cascadeOnDelete();
+            $table->foreignId('service_request_id')->constrained('service_requests')->cascadeOnDelete();
+            $table->foreignId('service_id')->constrained()->cascadeOnDelete();
             $table->Integer('quantity')->default(1);
-            $table->decimal('unit_amount',)->nullable();
-            $table->decimal('total_amount')->constrained('service_requests')->cascadeOnDelete();
+            $table->decimal('unit_amount',10,2)->nullable();
+            $table->decimal('total_amount',10,2);
             $table->timestamps();
         });
     }

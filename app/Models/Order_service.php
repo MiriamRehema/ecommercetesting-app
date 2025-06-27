@@ -10,7 +10,7 @@ class Order_service extends Model
     use HasFactory;
      protected $fillable=[
         'service_requests_id',
-       'services_id',
+       'service_id',
        'quantity',
        'unit_amout',
        'total_amount'

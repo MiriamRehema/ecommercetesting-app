@@ -66,5 +66,9 @@ class User extends Authenticatable
     public function reviews(){
         return $this->hasMany(Review::class);
     }
+    public function requests(){
+        return $this->hasMany(Service_request::class);
+    }
+
    
 }

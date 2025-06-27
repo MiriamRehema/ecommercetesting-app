@@ -9,7 +9,7 @@ class Order_service extends Model
 {
     use HasFactory;
      protected $fillable=[
-        'service_requests_id',
+      'service_request_id',
        'service_id',
        'quantity',
        'unit_amout',
@@ -18,7 +18,7 @@ class Order_service extends Model
     ];
 
     public function requests(){
-    return $this->belongsTo(Service_requests::class);
+    return $this->belongsTo(Service_requests::class,'service_requests_id');
    }
    public function service(){
     return $this->belongsTo(Service::class);

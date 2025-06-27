@@ -43,6 +43,13 @@ class ReviewResource extends Resource
                             ->searchable()
                             ->preload()
                             ->required(),
+                Select::make('service_id')
+                            ->label('service')
+                            ->relationship('service', 'name')
+                            ->required()
+                            ->searchable()
+                            ->preload()
+                            ->required(),
 
                 ]),
                
@@ -50,7 +57,12 @@ class ReviewResource extends Resource
                 
                 
                 TextInput::make('rating')
-                    
+                    ->label('Product rating')
+                    ->maxLength(255)
+                    ->default(null),
+
+                TextInput::make('service_rating')
+                    ->required()
                     ->maxLength(255)
                     ->default(null),
                 
@@ -76,7 +88,20 @@ class ReviewResource extends Resource
                 ->searchable(),
 
                 Tables\Columns\TextColumn::make('rating')
+                ->label('product rating')
                     ->searchable(),
+
+                Tables\Columns\Textcolumn::make('service.name')
+                ->label('service')
+                ->sortable()
+                ->searchable(),
+                Tables\Columns\TextColumn::make('service_rating')
+                    ->searchable(),
+
+
+
+
+                
 
 
                 
@@ -90,8 +115,8 @@ class ReviewResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('comment')
-                    ->searchable(),
+                // Tables\Columns\TextColumn::make('comment')
+                //     ->searchable(),
             ])
             ->filters([
                 //

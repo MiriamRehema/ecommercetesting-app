@@ -14,6 +14,8 @@ class Review extends Model
         'user_id',
         'rating',
         'comment',
+        'service_id',
+        'service_rating'
         
 
     ];
@@ -25,7 +27,7 @@ class Review extends Model
      public function user(){
     return $this->belongsTo(User::class);
    }
-   public function services(){
+   public function service(){
     return $this->belongsTo(Service::class);
    }
   

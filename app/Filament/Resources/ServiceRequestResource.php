@@ -26,6 +26,7 @@ use Filament\Tables\Table;
 use Filament\Forms\Set;
 use Filament\Forms\Get;
 use Filament\Forms\Key;
+use Illuminate\Support\Number;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\disableOptionsWhenSelectedInSiblingRepeaterItems;
@@ -38,7 +39,8 @@ use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 
-
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -64,7 +66,7 @@ class ServiceRequestResource extends Resource
 
                         Select::make('payment_method')
                         ->options([
-                            'mpsesa' => 'Mpesa',
+                            'mpesa' => 'Mpesa',
                             'cheque' => 'Cheque'
                         ])
                         ->required(),
@@ -131,10 +133,10 @@ class ServiceRequestResource extends Resource
                             ->columnSpan(4)
                             ->reactive()
                             ->afterStateUpdated(
-                                fn ($state,Set $set)=>$set('unit_amount',Service::find($state)?->price ?? 0)
+                                fn ($state,Set $set)=>$set('unit_amount',Services::find($state)?->price ?? 0)
                             )
                             ->afterStateUpdated(
-                                fn ($state,Set $set)=>$set('total_amount',Service::find($state)?->price ?? 0)
+                                fn ($state,Set $set)=>$set('total_amount',Services::find($state)?->price ?? 0)
                             ),
                             
 
@@ -178,10 +180,10 @@ class ServiceRequestResource extends Resource
                                 $total += $get("services.{$key}.total_amount");
                             }
                             $set('grand_total',$total);
-                            // return '$' . number_format($total, 2);
+                             return '$' . number_format($total, 2);
                             
                             
-                            return Number::currency($total,'$');
+                           // return Number::currency($total,'$');
                         }),
                        
                         
@@ -248,8 +250,11 @@ class ServiceRequestResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make(),
+                    DeleteAction::make(),
+                ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

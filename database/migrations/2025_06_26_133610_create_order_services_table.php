@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('service_id')->constrained()->cascadeOnDelete();
             $table->Integer('quantity')->default(1);
             $table->decimal('unit_amount',10,2)->nullable();
-            $table->decimal('total_amount',10,2);
+            $table->decimal('total_amount',10,2)->constrained('service_requests')->cascadeOnDelete();
             $table->timestamps();
         });
     }

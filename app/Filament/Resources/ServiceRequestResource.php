@@ -7,6 +7,7 @@ use App\Filament\Resources\ServiceRequestResource;
 use App\Filament\Resources\ServiceRequestResource\RelationManagers;
 use App\Models\Service_request;
 use App\Models\Service;
+//use App\Models\Order_service;
 use Filament\Forms;
 use Filament\Forms\Form;
 
@@ -27,6 +28,7 @@ use Filament\Forms\Set;
 use Filament\Forms\Get;
 use Filament\Forms\Key;
 use Illuminate\Support\Number;
+
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\disableOptionsWhenSelectedInSiblingRepeaterItems;
@@ -38,6 +40,8 @@ use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\Action;
+
 
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -48,7 +52,9 @@ class ServiceRequestResource extends Resource
 {
     protected static ?string $model = Service_request::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-adjustments-horizontal';
+
+    protected static ?int $navigationSort = 4;
 
     public static function form(Form $form): Form
     {
@@ -76,7 +82,8 @@ class ServiceRequestResource extends Resource
                         ->options([
                             'pending' => 'Pending',
                             'paid' => 'Paid',
-                            'failed' => 'Failed'
+                            'failed' => 'Failed',
+                            
                         ])
                         ->default('pending')
                         ->required(),
@@ -84,26 +91,27 @@ class ServiceRequestResource extends Resource
                         ToggleButtons::make('status')
                         ->inline()
                         ->required()
-                        ->default('new')
+                        ->default('requested')
                         ->options([
                             
                             'requested' => 'Requested',
-                            'in progress' => 'In Progress',
+                            'in_progress' => 'In Progress',
                             'completed' => 'Completed',
+                            'cancelled' => 'Cancelled',
                             
                         ])
                         ->colors([
                             'requested'=>'info',
-                            'in progress'=>'success',
-                            
+                            'in_progress'=>'success',
                             'completed'=>'primary',
-                            
+                            'cancelled'=>'danger',
 
                         ])
                         ->icons([
                             'requested' => 'heroicon-o-shopping-cart',
-                            'in progress' => 'heroicon-o-cog',
-                            'completed' => 'heroicon-o-truck',
+                            'in_progress' => 'heroicon-o-cog',
+                            'completed' => 'heroicon-o-check-circle',
+                            'cancelled' => 'heroicon-o-x-circle',
                             
                         ]),
                         select::make('currency')
@@ -113,7 +121,7 @@ class ServiceRequestResource extends Resource
                             'EUR' => 'Euro',
                             'GBP' => 'British Pound',
                             'INR' => 'Indian Rupee',
-                            'KSH' => 'Kenyan Shilling',
+                            
                         ]),
                         
                         
@@ -133,10 +141,10 @@ class ServiceRequestResource extends Resource
                             ->columnSpan(4)
                             ->reactive()
                             ->afterStateUpdated(
-                                fn ($state,Set $set)=>$set('unit_amount',Services::find($state)?->price ?? 0)
+                                fn ($state,Set $set)=>$set('unit_amount',Service::find($state)?->price ?? 0)
                             )
                             ->afterStateUpdated(
-                                fn ($state,Set $set)=>$set('total_amount',Services::find($state)?->price ?? 0)
+                                fn ($state,Set $set)=>$set('total_amount',Service::find($state)?->price ?? 0)
                             ),
                             
 
@@ -180,10 +188,10 @@ class ServiceRequestResource extends Resource
                                 $total += $get("services.{$key}.total_amount");
                             }
                             $set('grand_total',$total);
-                             return '$' . number_format($total, 2);
+                             //return '$' . number_format($total, 2);
                             
                             
-                           // return Number::currency($total,'$');
+                            return Number::currency($total,'$');
                         }),
                        
                         
@@ -229,8 +237,10 @@ class ServiceRequestResource extends Resource
                 SelectColumn::make('status')
                 ->options([
                             'requested' => 'Requested',
-                            'in progress' => 'In Progress',
+                            'in_progress' => 'In Progress',
                             'completed' => 'Completed',
+                            'cancelled' => 'Cancelled',
+                          
                             
                         ])
                 ->searchable()
@@ -268,6 +278,10 @@ class ServiceRequestResource extends Resource
         return [
             //
         ];
+    }
+    public static function getNavigationBadge(): ?string
+    {
+       return static::getModel()::count();
     }
 
     public static function getPages(): array

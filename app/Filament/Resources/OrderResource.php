@@ -99,7 +99,7 @@ class OrderResource extends Resource
                         ])
                         ->colors([
                             'new'=>'info',
-                            'processing'=>'success',
+                            'procesing'=>'success',
                             'shipped'=>'warning',
                             'delivered'=>'primary',
                             'cancelled'=>'danger'
@@ -107,7 +107,7 @@ class OrderResource extends Resource
                         ])
                         ->icons([
                             'new' => 'heroicon-o-shopping-cart',
-                            'processing' => 'heroicon-o-cog',
+                            'procesing' => 'heroicon-o-cog',
                             'shipped' => 'heroicon-o-truck',
                             'delivered' => 'heroicon-o-check-circle',
                             'cancelled' => 'heroicon-o-x-circle'

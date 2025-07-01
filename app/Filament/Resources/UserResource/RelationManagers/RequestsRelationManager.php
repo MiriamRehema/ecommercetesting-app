@@ -54,12 +54,14 @@ class RequestsRelationManager extends RelationManager
                     'requested' => 'info',
                     'in_progress' => 'warning',
                     'completed' => 'success',
+                    'cancelled' => 'danger',
             
                 })
                 ->icon(fn(string $state): string => match($state) {
                     'requested' => 'heroicon-m-sparkles',
                     'in_progress' => 'heroicon-m-arrow-path',
                     'completed' => 'heroicon-m-check-badge',
+                    'cancelled' => 'heroicon-m-x-circle',
                     
                 })
                 ->sortable(),

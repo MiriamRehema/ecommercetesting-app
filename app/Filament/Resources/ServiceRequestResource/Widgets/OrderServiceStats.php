@@ -45,10 +45,29 @@ class OrderServiceStats extends ChartWidget
                         
         ];
 
+
     }
 
     protected function getType(): string
     {
         return 'doughnut';
     }
+    protected function getOptions(): array
+    {
+        return [
+            'responsive' => true,
+            'plugins' => [
+                'legend' => [
+                    'position' => 'top',
+                ],
+                'tooltip' => [
+                    'enabled' => true,
+                ],
+            ],
+
+            'cutout' => '70%',
+        ];
+    }
+   
+
 }

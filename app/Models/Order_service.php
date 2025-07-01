@@ -12,7 +12,7 @@ class Order_service extends Model
       'service_request_id',
        'service_id',
        'quantity',
-       'unit_amout',
+       'unit_amount',
        'total_amount'
 
     ];

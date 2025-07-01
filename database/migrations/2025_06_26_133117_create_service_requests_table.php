@@ -17,7 +17,7 @@ return new class extends Migration
             $table->decimal('grand_total',10,2)->nullable();
             $table->string('payment_method')->nullable();
             $table->string('payment_status')->nullable();
-            $table->enum('status', ['requested', 'in_progress', 'completed'])->default('requested'); // Tracks request status
+            $table->enum('status', ['requested', 'in_progress', 'completed','cancelled'])->default('requested'); // Tracks request status
             $table->string('currency')->nullable();
             $table->timestamps();
         });
